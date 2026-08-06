@@ -28,7 +28,7 @@ The project is built on a modern architecture, containerized with **Docker**, an
 
 ---
 
-## 🚀 Local Development Guide
+##  Local Development Guide
 
 Prerequisites: Ensure **Node.js** (v18+) or **Docker** is installed on your machine.
 
