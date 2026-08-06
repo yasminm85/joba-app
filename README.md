@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Joba Description
 
-## Getting Started
+Joba is a full-stack web application built with **Next.js**, designed to extract and analyze key information from job descriptions using AI.
 
-First, run the development server:
+The project is built on a modern architecture, containerized with **Docker**, and automatically deployed to a production server via **GitHub Actions CI/CD**.
 
+**Live Demo:** [joba.chato.sbs](https://joba.chato.sbs)
+
+---
+
+## Key Features
+
+- **Smart Poster and Text Extraction:** Extract qualifications, responsibilities, and key requirements from job description text or posters in a single step.
+- **Effortless Organization:** Joba automatically structures and organizes extracted results neatly into the database.
+- **Google Calendar Integration:** Schedule interview reminders seamlessly with built-in Google Calendar integration.
+
+---
+
+## 🛠️ Tech Stack
+
+| Category | Technology |
+| :--- | :--- |
+| **Frontend & Backend** | Next.js (React.js, API Routes) |
+| **Database** | MongoDB |
+| **Containerization** | Docker & Docker Compose |
+| **Web Server / Proxy** | Nginx (Reverse Proxy + SSL) |
+| **CI/CD & DevOps** | GitHub Actions, SSH, VPS |
+
+---
+
+## 🚀 Local Development Guide
+
+Prerequisites: Ensure **Node.js** (v18+) or **Docker** is installed on your machine.
+
+### 1. Clone Repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone [https://github.com/yasminm85/joba-app.git](https://github.com/yasminm85/joba-app.git)
+cd joba-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Configure Environment Variables
+```bash
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/joba_db
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+AUTH_SECRET=your_super_secret_auth_key
+NEXTAUTH_SECRET=your_super_secret_auth_key
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 3. Run the Application
+```bash
+npm install
+npm run dev
+```
+Open your browser and navigate to http://localhost:3000
