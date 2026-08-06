@@ -1,0 +1,89 @@
+name: CI/CD Deploy Next.js to VPS
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          build-args: |
+            NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+            NEXT_PUBLIC_MAINTENANCE_MODE=${{ secrets.NEXT_PUBLIC_MAINTENANCE_MODE }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+  deploy-to-vps:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check secrets
+        run: |
+          echo "NEXTAUTH_URL is set: ${{ secrets.NEXTAUTH_URL != '' }}"
+          echo "MONGODB_URI is set: ${{ secrets.MONGODB_URI != '' }}"
+          echo "NEXTAUTH_SECRET is set: ${{ secrets.NEXTAUTH_SECRET != '' }}"
+          echo "GOOGLE_CLIENT_ID is set: ${{ secrets.GOOGLE_CLIENT_ID != '' }}"
+          echo "GOOGLE_CLIENT_SECRET is set: ${{ secrets.GOOGLE_CLIENT_SECRET != '' }}"
+          echo "GEMINI_API_KEY is set: ${{ secrets.GEMINI_API_KEY != '' }}"
+          echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID is set: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID != '' }}"
+          echo "BREVO_API_KEY is set: ${{ secrets.BREVO_API_KEY != '' }}"
+          echo "SENDER_EMAIL is set: ${{ secrets.SENDER_EMAIL != '' }}"
+          echo "SENDER_NAME is set: ${{ secrets.SENDER_NAME != '' }}"
+          echo "NEXT_PUBLIC_MAINTENANCE_MODE is set: ${{ secrets.NEXT_PUBLIC_MAINTENANCE_MODE != '' }}"
+
+      - name: Deploy via SSH to VPS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            IMAGE_TAG="${{ env.REGISTRY }}/${{ github.repository_owner }}/$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]'):latest"
+            echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker stop nextjs-app || true
+            docker rm nextjs-app || true
+            docker pull $IMAGE_TAG
+            cat > /root/.env.joba << 'EOF'
+            AUTH_TRUST_HOST=true
+            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+            MONGODB_URI=${{ secrets.MONGODB_URI }}
+            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+            NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+            BREVO_API_KEY=${{ secrets.BREVO_API_KEY }}
+            SENDER_EMAIL=${{ secrets.SENDER_EMAIL }}
+            SENDER_NAME=${{ secrets.SENDER_NAME }}
+            NEXT_PUBLIC_MAINTENANCE_MODE=${{ secrets.NEXT_PUBLIC_MAINTENANCE_MODE }}
+            EOF
+            docker run -d --name nextjs-app --restart always -p 3000:3000 --env-file /root/.env.joba $IMAGE_TAG
+            docker image prune -f

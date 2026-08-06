@@ -1,0 +1,37 @@
+{
+  "name": "joba-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@getbrevo/brevo": "^6.0.2",
+    "@google/genai": "^2.13.0",
+    "@react-oauth/google": "^0.13.5",
+    "@tanstack/react-query": "^5.101.2",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "gsap": "^3.15.0",
+    "lucide-react": "^1.25.0",
+    "mongoose": "^9.7.4",
+    "motion": "^12.42.2",
+    "next": "16.2.10",
+    "next-auth": "^5.0.0-beta.31",
+    "nodemailer": "^7.0.13",
+    "openai": "^6.48.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tesseract.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10",
+    "tailwindcss": "^4"
+  }
+}
