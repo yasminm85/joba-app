@@ -184,7 +184,7 @@ export default function AuthModal({ isOpen, onClose }) {
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-100" />
                 </div>
-                <span className="relative bg-white px-3 text-[9px] font-bold uppercase text-gray-400">Or login with</span>
+                <span className="relative bg-white px-3 text-[9px] font-bold capitalize text-gray-400">Or login with</span>
               </div>
 
               <button

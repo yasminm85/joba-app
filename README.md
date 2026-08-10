@@ -16,7 +16,7 @@ The project is built on a modern architecture, containerized with **Docker**, an
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Category | Technology |
 | :--- | :--- |
