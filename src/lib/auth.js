@@ -49,19 +49,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async signIn({ user, account }) {
-      if (account?.provider === 'google') {
-        await findOrCreateGoogleUser(user);
-      }
       return true;
     },
     async jwt({ token, user, account }) {
-      if (user) token.id = user.id;
-      if (account) token.accessToken = account.access_token;
+      if (account && user) {
+        if (account.provider === 'google') {
+          const dbUser = await findOrCreateGoogleUser(user);
+          if (dbUser) {
+            token.id = dbUser._id.toString(); 
+          }
+        } else {
+          token.id = user.id || user._id?.toString();
+        }
+        token.accessToken = account.access_token;
+      }
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.sub;
+      if (session.user && token.id) {
+        session.user.id = token.id; 
       }
       return session;
     },

@@ -167,19 +167,18 @@ export async function validateUserCredentials(email, password) {
   };
 }
 
-export async function findOrCreateGoogleUser(user) {
+export async function findOrCreateGoogleUser(googleUser) {
   await connectDB();
-  const existingUser = await User.findOne({ email: user.email });
+  let user = await User.findOne({ email: googleUser.email });
 
-  if (!existingUser) {
-    await User.create({
-      name: user.name,
-      email: user.email,
-      image: user.image,
-      isGoogleUser: true,
-      emailVerified: new Date(),
+  if (!user) {
+    user = await User.create({
+      name: googleUser.name,
+      email: googleUser.email,
+      image: googleUser.image,
+      provider: 'google',
     });
   }
 
-  return true;
+  return user;
 }
