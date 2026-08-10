@@ -25,12 +25,17 @@ export function AuthProvider({ children }) {
 
   const signInWithGoogle = async () => {
     try {
+      setErrorMsg(null);
       const result = await signIn("google", { redirect: false });
-      if (result?.error) throw new Error(result.error);
-      return result;
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+      if (result?.url) {
+        window.location.href = result.url;
+      }
     } catch (error) {
       console.error("Google Sign-In Error:", error);
-      throw error;
+      setErrorMsg("Gagal melakukan login dengan Google.");
     }
   };
 
