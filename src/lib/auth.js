@@ -50,7 +50,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === 'google') {
-        await findOrCreateGoogleUser(user);
+        const dbUser = await findOrCreateGoogleUser(user);
+        if (dbUser) {
+          user.id = dbUser._id.toString();
+        }
       }
       return true;
     },
