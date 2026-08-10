@@ -66,14 +66,22 @@ export default function MainPage() {
       });
 
       if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.error || 'Failed Extract Data');
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('text/html')) {
+          throw new Error(
+            `Server Error (${response.status}): Ukuran file/data terlalu besar.`,
+          );
+        }
+
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Terjadi kesalahan pada server.');
       }
 
       const data = await response.json();
       setResult(data);
       setSelectedStatus('Applied');
     } catch (err) {
+      console.error('Fetch Error:', err);
       setError(err.message);
     } finally {
       setIsExtracting(false);
