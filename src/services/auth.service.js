@@ -167,7 +167,7 @@ export async function validateUserCredentials(email, password) {
   };
 }
 
-export async function findOrCreateGoogleUser(user) {
+export async function findOrCreateGoogleUser(googleUser) {
   await connectDB();
   let user = await User.findOne({ email: googleUser.email });
 
