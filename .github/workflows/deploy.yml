@@ -75,7 +75,7 @@ jobs:
             docker stop nextjs-app || true
             docker rm nextjs-app || true
             docker pull $IMAGE_TAG
-            sudo bash -c 'cat > /root/.env.joba << EOF
+            cat > /home/ubuntu/.env.joba << 'EOF'
             AUTH_TRUST_HOST=true
             NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
             MONGODB_URI=${{ secrets.MONGODB_URI }}
@@ -88,6 +88,6 @@ jobs:
             SENDER_EMAIL=${{ secrets.SENDER_EMAIL }}
             SENDER_NAME=${{ secrets.SENDER_NAME }}
             NEXT_PUBLIC_MAINTENANCE_MODE=${{ secrets.NEXT_PUBLIC_MAINTENANCE_MODE }}
-            EOF'
-            docker run -d --name nextjs-app --restart always -p 3000:3000 --env-file /root/.env.joba $IMAGE_TAG
+            EOF
+            docker run -d --name nextjs-app --restart always -p 127.0.0.1:3000:3000 --env-file /home/ubuntu/.env.joba $IMAGE_TAG
             docker image prune -f
